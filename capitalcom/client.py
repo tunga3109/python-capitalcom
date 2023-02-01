@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from enum import Enum
 
 import requests
 
@@ -38,10 +39,48 @@ class CapitalComConstants():
     WATCHLISTS_ENDPOINT = BASE_URL + 'watchlists'
 
 
+class DirectionType(Enum):
+    BUY = 'BUY'
+    SELL = 'SELL'
+    
+class StopLossType(Enum):
+    LEVEL = 'stopLevel'
+    DISTANCE = 'stopDistance'
+    AMOUNT = 'stopAmount'
+    GUARANTEED = 'guaranteedStop'
+    TRAILING = 'trailingStop'
+    
+class TakeProfitType(Enum):
+    LEVEL = 'profitLevel'
+    DISTANCE = 'profitDistance'
+    AMOUNT = 'profitAmount'
 
 
 
+class Client():
+    """
+    This is API for market Capital.com
+    list of endpoints here : https://open-api.capital.com
+    API documantation here: https://capital.com/api-development-guide
+    """
+
+    def __init__(self, api_key):
+        self.api_key = api_key
 
     
+    def _get_header(self, **kwargs):
+        return {
+            **kwargs,
+            CapitalComConstants.HEADER_API_KEY_NAME: self.api_key
+        }
+
+
+
+        
+
+
+
+
+
 
 
