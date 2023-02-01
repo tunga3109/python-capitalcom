@@ -127,9 +127,6 @@ class Client():
         return r.json()
 
 
-
-
-
 # cl = Client(login, password, API_KEY)
 
 # c = cl._get_cst()
