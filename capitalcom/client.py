@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 import requests
-
+import json
 from config import *
 
 class CapitalComConstants():
@@ -44,20 +44,25 @@ class CapitalComConstants():
 class DirectionType(Enum):
     BUY = 'BUY'
     SELL = 'SELL'
-    
-class StopLossType(Enum):
-    LEVEL = 'stopLevel'
-    DISTANCE = 'stopDistance'
-    AMOUNT = 'stopAmount'
-    GUARANTEED = 'guaranteedStop'
-    TRAILING = 'trailingStop'
-    
-class TakeProfitType(Enum):
-    LEVEL = 'profitLevel'
-    DISTANCE = 'profitDistance'
-    AMOUNT = 'profitAmount'
 
-key = 'kdkjekjdsjkdkjd'
+class SourceType(Enum):
+    CLOSE_OUT = 'CLOSE_OUT'
+    DEALER = 'DEALER'
+    SL = 'SL'
+    SYSTEM = 'SYSTEM'
+    TP = 'TP'
+    USER = 'USER'
+
+class StatusType(Enum):
+    ACCEPTED = 'ACCEPTED'
+    REJECTED = 'REJECTED'
+    UNKNOWN = 'UNKNOWN'
+
+class FilterType(Enum):
+    EDIT_STOP_AND_LIMIT = 'EDIT_STOP_AND_LIMIT'
+    POSITION = 'POSITION'
+    SYSTEM = 'SYSTEM'
+    WORKING_ORDER = 'WORKING_ORDER'
 
 
 class Client():
@@ -67,72 +72,140 @@ class Client():
     API documantation here: https://capital.com/api-development-guide
     """
 
-    def __init__(self, login, password, api_key):
-        self.login = login
-        self.password = password
+    """Starting session"""
+    def __init__(self, log, pas, api_key):
+        self.login = log
+        self.password = pas
         self.api_key = api_key
 
-
-    
-    def _get_header(self, **kwargs):
-        return {
-            **kwargs
-        }
-
-    def _get(self, url, **kwargs):
-        return requests.get(url, **kwargs)
-
-    def _post(self, url, **kwargs):
-        return requests.post(url, **kwargs)
-
-    def _delete(self, url, **kwargs):
-        return requests.delete(url, **kwargs)
-
-    def start_session(self):
-        r = self._post(
-            CapitalComConstants.SESSION_ENDPOINT, 
-            json={'identifier': login, 'password': password},
-            headers={CapitalComConstants.HEADER_API_KEY_NAME: self.api_key}
-            )
-        return r.json()
-    
-    def _get_cst(self) -> str:
-        r = self._post(
-            CapitalComConstants.SESSION_ENDPOINT, 
-            json={'identifier': login, 'password': password},
-            headers={CapitalComConstants.HEADER_API_KEY_NAME: self.api_key}
-            )
-
-        return r.headers['CST']
-
-    def _get_x_security_token(self) -> str:
-        r = self._post(
-            CapitalComConstants.SESSION_ENDPOINT, 
-            json={'identifier': login, 'password': password},
-            headers={CapitalComConstants.HEADER_API_KEY_NAME: self.api_key}
-            )
-
-        return r.headers['X-SECURITY-TOKEN']
-
-    
-    def accounts_information(self, cst, x_token): #!!!!!!!!!!!!
-        r = self._get(
+        self.session = requests.Session()
+        self.response = self.session.post(
             CapitalComConstants.SESSION_ENDPOINT,
-            headers={
-                'CST': cst,
-                'X-SECURITY-TOKEN': x_token
-            }
+            json={'identifier': self.login, 'password': self.password},
+            headers={'X-CAP-API-KEY': self.api_key}
         )
 
-        return r.json()
+        self.cst = self.response.headers['CST']
+        self.x_security_token = self.response.headers['X-SECURITY-TOKEN']
+
+    """Rest API Methods"""
+
+    def _get(self, url, **kwargs):
+        return requests.get(url, **kwargs, headers=self._get_headers())
+
+    def _post(self, url, **kwargs):
+        return requests.post(url, 
+                                json=self._get_body_parameters(**kwargs),
+                                headers=self._get_headers())
+
+    def _delete(self, url, **kwargs):
+        return requests.delete(url,
+                                json=self._get_body_parameters(**kwargs),
+                                headers=self._get_headers())
+
+    def _put(self, url, **kwargs):
+        return requests.put(url,
+                                json=self._get_body_parameters(**kwargs),
+                                headers=self._get_headers())
+
+    """Headers"""
+    def _get_headers(self, **kwargs):
+        return {
+                **kwargs,
+                'CST': self.cst,
+                'X-SECURITY-TOKEN': self.x_security_token
+            }
+
+    """Body Parameters"""
+    def _get_body_parameters(self, **kwargs):
+    
+        return {
+            **kwargs
+            }
+
+    """Params"""
+    def _get_params(self, **kwargs):
+        return {
+            **kwargs
+            }
 
 
-# cl = Client(login, password, API_KEY)
+    """SESSION"""
+    def get_sesion_details(self): 
+        r = self._get(
+            CapitalComConstants.SESSION_ENDPOINT,
+        )
 
-# c = cl._get_cst()
-# x = cl._get_x_security_token()
+        return json.dumps(r.json(), indent=4)
 
-# print(cl.accounts_information(cst='j4zKbE4dncy7SQH0pTg4v1NM', x_token='dBntDf8bsCiS76hDNElLmzpL5xh12nL'))
+    def switch_account(self, accountId): 
+        r = self._put(
+            CapitalComConstants.SESSION_ENDPOINT,
+            accountId=accountId,
+        )
+        return json.dumps(r.json(), indent=4)
+    
+    def log_out_account(self):
+        r = self._delete(
+            CapitalComConstants.SESSION_ENDPOINT,
+        )
+        return json.dumps(r.json(), indent=4)
+    
+    """ACCOUNTS"""
+    def all_accounts(self): 
+        r = self._get(
+            CapitalComConstants.ACCOUNTS_ENDPOINT,
+        )
+        return json.dumps(r.json(), indent=4)
+
+    def account_preferences(self): 
+        r = self._get(
+            CapitalComConstants.ACCOUNT_PREFERENCES_ENDPOINT,
+        )
+        return json.dumps(r.json(), indent=4)
+
+    def update_account_preferences(self, leverages: dict, hedgingmode: bool): 
+        r = self._put(
+            CapitalComConstants.ACCOUNT_PREFERENCES_ENDPOINT,
+            leverages=leverages,
+            hedgingMode=hedgingmode
+        )
+        return json.dumps(r.json(), indent=4)
+
+    def account_activity_history(self): 
+        r = self._put(
+            CapitalComConstants.ACCOUNT_ACTIVITY_HISTORY_ENDPOINT,
+        )
+        return json.dumps(r.json(), indent=4)
+    
+
+    """POSITIONS"""
+    def all_positions(self): 
+        r = self._get(
+            CapitalComConstants.POSITIONS_ENDPOINT,
+        )
+        return json.dumps(r.json(), indent=4)
+
+    
+    def close_position(self, dealid): 
+        r = self._delete(
+            CapitalComConstants.POSITIONS_ENDPOINT,
+            dealId=dealid,
+        )
+        return json.dumps(r.json(), indent=4)
+
+
+if __name__ == '__main__':
+
+    cl = Client(login, password, API_KEY)
+    # print(cl.account_preferences())
+
+    
+
+
+
+
+
 
 
 
