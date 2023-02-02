@@ -1,9 +1,8 @@
-from datetime import datetime, timedelta
 from enum import Enum
 
 import requests
 import json
-from config import *
+from config import login, password, API_KEY
 
 class CapitalComConstants():
     HEADER_API_KEY_NAME = 'X-CAP-API-KEY'
@@ -128,13 +127,13 @@ class Client():
 
     def _delete(self, url, **kwargs):
         return requests.delete(url,
-                                json=self._get_body_parameters(**kwargs),
-                                headers=self._get_headers())
+                            json=self._get_body_parameters(**kwargs),
+                            headers=self._get_headers())
 
     def _put(self, url, **kwargs):
         return requests.put(url,
-                                json=self._get_body_parameters(**kwargs),
-                                headers=self._get_headers())
+                            json=self._get_body_parameters(**kwargs),
+                            headers=self._get_headers())
 
     """Headers"""
     def _get_headers(self, **kwargs):
@@ -224,12 +223,11 @@ class Client():
         return json.dumps(r.json(), indent=4)
 
     """POSITIONS"""
-    def all_positions(self): 
+    def all_positions(self):   
         r = self._get_with_headers(
             CapitalComConstants.POSITIONS_ENDPOINT,
         )
         return json.dumps(r.json(), indent=4)
-
     
     def close_position(self, dealid): 
         r = self._delete(
@@ -243,28 +241,3 @@ if __name__ == '__main__':
 
     cl = Client(login, password, API_KEY)
     print(cl.account_preferences())
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
