@@ -8,7 +8,7 @@ from config import *
 class CapitalComConstants():
     HEADER_API_KEY_NAME = 'X-CAP-API-KEY'
     API_VERSION = 'v1'
-    BASE_URL = 'https://demo-api-capital.backend-capital.com/api/{}/'.format(
+    BASE_URL = 'https://api-capital.backend-capital.com/api/{}/'.format(
         API_VERSION
     )
     BASE_DEMO_URL = 'https://demo-api-capital.backend-capital.com/api/{}/'.format(
@@ -64,6 +64,28 @@ class FilterType(Enum):
     SYSTEM = 'SYSTEM'
     WORKING_ORDER = 'WORKING_ORDER'
 
+class TransationType(Enum):
+    DEPOSIT = 'DEPOSIT'
+    WITHDRAWAL = 'WITHDRAWAL'
+    REFUND = 'REFUND'
+    WITHDRAWAL_MONEY_BACK = 'WITHDRAWAL_MONEY_BACK'
+    TRADE = 'TRADE'
+    SWAP = 'SWAP'
+    TRADE_COMMISSION = 'TRADE_COMMISSION'
+    TRADE_COMMISSION_GSL = 'TRADE_COMMISSION_GSL'
+    CONVERT = 'CONVERT'
+    NEGATIVE_BALANCE_PROTECTION = 'NEGATIVE_BALANCE_PROTECTION'
+    REIMBURSEMENT = 'REIMBURSEMENT'
+    TRADE_CORRECTION = 'TRADE_CORRECTION'
+    CHARGEBACK = 'CHARGEBACK'
+    ADJUSTMENT = 'ADJUSTMENT'
+    DIVIDEND = 'DIVIDEND'
+    ACCOUNT_CLOSURE = 'ACCOUNT_CLOSURE'
+    BONUS = 'BONUS'
+    TRANSFER = 'TRANSFER'
+
+
+
 
 class Client():
     """
@@ -91,7 +113,13 @@ class Client():
     """Rest API Methods"""
 
     def _get(self, url, **kwargs):
+        return requests.get(url, **kwargs)
+
+    def _get_with_headers(self, url, **kwargs):
         return requests.get(url, **kwargs, headers=self._get_headers())
+
+    def _get_with_params_and_headers(self, url, **kwargs):
+        return requests.get(url, params=self._get_params(**kwargs), headers=self._get_headers())
 
     def _post(self, url, **kwargs):
         return requests.post(url, 
@@ -129,10 +157,9 @@ class Client():
             **kwargs
             }
 
-
     """SESSION"""
     def get_sesion_details(self): 
-        r = self._get(
+        r = self._get_with_headers(
             CapitalComConstants.SESSION_ENDPOINT,
         )
 
@@ -153,13 +180,13 @@ class Client():
     
     """ACCOUNTS"""
     def all_accounts(self): 
-        r = self._get(
+        r = self._get_with_headers(
             CapitalComConstants.ACCOUNTS_ENDPOINT,
         )
         return json.dumps(r.json(), indent=4)
 
     def account_preferences(self): 
-        r = self._get(
+        r = self._get_with_headers(
             CapitalComConstants.ACCOUNT_PREFERENCES_ENDPOINT,
         )
         return json.dumps(r.json(), indent=4)
@@ -172,16 +199,33 @@ class Client():
         )
         return json.dumps(r.json(), indent=4)
 
-    def account_activity_history(self): 
-        r = self._put(
+    def account_activity_history(self, fr: str, to: str, last_period: int = 600, detailed: bool = True, dealid: str = None, epic: str = None, filter: str = None): 
+        f = 'from'
+        r = self._get_with_params_and_headers(
             CapitalComConstants.ACCOUNT_ACTIVITY_HISTORY_ENDPOINT,
+            f=fr,
+            to=to,
+            lastPeriod=last_period,
+            detailed=detailed,
+            dealId=dealid,
+            epic=epic,
+            filter=filter
         )
         return json.dumps(r.json(), indent=4)
-    
+
+    def account_transaction_history(self, fr: str, to: str, last_period: int = 600, type: TransationType = None): 
+        r = self._get_with_params_and_headers(
+            CapitalComConstants.ACCOUNT_TRANSACTION_HISTORY_ENDPOINT,
+            f=fr,
+            to=to,
+            lastPeriod=last_period,
+            type=type.value
+        )
+        return json.dumps(r.json(), indent=4)
 
     """POSITIONS"""
     def all_positions(self): 
-        r = self._get(
+        r = self._get_with_headers(
             CapitalComConstants.POSITIONS_ENDPOINT,
         )
         return json.dumps(r.json(), indent=4)
@@ -198,7 +242,7 @@ class Client():
 if __name__ == '__main__':
 
     cl = Client(login, password, API_KEY)
-    # print(cl.account_preferences())
+    print(cl.account_preferences())
 
     
 

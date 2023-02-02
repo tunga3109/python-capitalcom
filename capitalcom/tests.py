@@ -5,15 +5,7 @@ import requests
 
 
 cl = Client(login, password, API_KEY)
-
-
-r = requests.post(
-    CapitalComConstants.SESSION_ENDPOINT,
-    json={'identifier': login, 'password': password},
-    headers={'X-CAP-API-KEY': API_KEY}
-)
-print(r.status_code)
-
+print(cl.account_activity_history(fr='2021-11-20T00:00:00', to='2022-06-30T00:00:00', filter='source!={0};type!={1};status=={2};'.format(SourceType.SL, FilterType.POSITION, StatusType.ACCEPTED)))
 
 
 
