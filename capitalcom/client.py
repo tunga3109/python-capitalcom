@@ -2,16 +2,10 @@ from enum import Enum
 import requests
 import json
 
-from config import login, password, API_KEY
-
-
 class CapitalComConstants():
     HEADER_API_KEY_NAME = 'X-CAP-API-KEY'
     API_VERSION = 'v1'
-    BASE_URL = 'https://demo-api-capital.backend-capital.com/api/{}/'.format(
-        API_VERSION
-    )
-    BASE_DEMO_URL = 'https://demo-api-capital.backend-capital.com/api/{}/'.format(
+    BASE_URL = 'https://api-capital.backend-capital.com/api/{}/'.format(
         API_VERSION
     )
 
@@ -164,6 +158,17 @@ class Client():
 
     """SESSION"""
     def get_sesion_details(self): 
+        """
+        Returns the user's session details
+        {
+        "clientId": "12345678",
+        "accountId": "12345678901234567",
+        "timezoneOffset": 3,
+        "locale": "en",
+        "currency": "USD",
+        "streamEndpoint": "wss://api-streaming-capital.backend-capital.com/"
+        }
+        """
         r = self._get_with_headers(
             CapitalComConstants.SESSION_ENDPOINT,
         )
@@ -171,6 +176,15 @@ class Client():
         return json.dumps(r.json(), indent=4)
 
     def switch_account(self, accountId): 
+        """
+        Switch active account
+        {
+        "trailingStopsEnabled": false,
+        "dealingEnabled": true,
+        "hasActiveDemoAccounts": false,
+        "hasActiveLiveAccounts": true
+        }
+        """
         r = self._put(
             CapitalComConstants.SESSION_ENDPOINT,
             accountId=accountId,
@@ -185,16 +199,52 @@ class Client():
     
     """ACCOUNTS"""
     def all_accounts(self): 
+        """
+        {
+        "accounts": [
+        {
+        "accountId": "12345678901234567",
+        "accountName": "USD",
+        "status": "ENABLED",
+        "accountType": "CFD",
+        "preferred": true,
+        "balance": {
+            "balance": 124.95,
+            "deposit": 125.18,
+            "profitLoss": -0.23,
+            "available": 116.93
+        },
+        "currency": "USD"
+        },
+        {
+        "accountId": "12345678907654321",
+        "accountName": "Second account",
+        "status": "ENABLED",
+        "accountType": "CFD",
+        "preferred": false,
+        "balance": {
+            "balance": 100,
+            "deposit": 100,
+            "profitLoss": 0,
+            "available": 0
+            },
+        "currency": "USD"
+         }
+        ]
+        }
+        """
         r = self._get_with_headers(
             CapitalComConstants.ACCOUNTS_ENDPOINT,
         )
         return json.dumps(r.json(), indent=4)
+
 
     def account_preferences(self): 
         r = self._get_with_headers(
             CapitalComConstants.ACCOUNT_PREFERENCES_ENDPOINT,
         )
         return json.dumps(r.json(), indent=4)
+
 
     def update_account_preferences(self, leverages: dict, hedgingmode: bool): 
         r = self._put(
@@ -204,7 +254,16 @@ class Client():
         )
         return json.dumps(r.json(), indent=4)
 
-    def account_activity_history(self, fr: str, to: str, last_period: int = 600, detailed: bool = True, dealid: str = None, epic: str = None, filter: str = None): 
+
+    def account_activity_history(self, 
+                                    fr: str, 
+                                    to: str, 
+                                    last_period: int = 600, 
+                                    detailed: bool = True, 
+                                    dealid: str = None, 
+                                    epic: str = None, 
+                                    filter: str = None): 
+        
         f = 'from'
         r = self._get_with_params_and_headers(
             CapitalComConstants.ACCOUNT_ACTIVITY_HISTORY_ENDPOINT,
@@ -218,11 +277,13 @@ class Client():
         )
         return json.dumps(r.json(), indent=4)
 
+
     def account_transaction_history(self, 
                                     fr: str, 
                                     to: str, 
                                     last_period: int = 600, 
                                     type: TransationType = None): 
+
         r = self._get_with_params_and_headers(
             CapitalComConstants.ACCOUNT_TRANSACTION_HISTORY_ENDPOINT,
             f=fr,
@@ -275,12 +336,14 @@ class Client():
 
         return json.dumps(r.json(), indent=4)
 
+
     def check_position(self, dealid: str):
         r = self._get_with_headers(
             CapitalComConstants.POSITIONS_ENDPOINT,
             json={'dealId': dealid}
         )
         return json.dumps(r.json(), indent=4)
+
 
     def update_the_position(self, 
                             dealid: str,
@@ -321,6 +384,7 @@ class Client():
             CapitalComConstants.ORDERS_ENDPOINT,
         )
         return json.dumps(r.json(), indent=4)
+
 
     def place_the_order(self, 
                             direction: DirectionType, 
@@ -387,6 +451,7 @@ class Client():
 
         return json.dumps(r.json(), indent=4)
     
+    
     def close_order(self, dealid): 
         r = self._delete(
             CapitalComConstants.ORDERS_ENDPOINT,
@@ -394,8 +459,3 @@ class Client():
         )
         return json.dumps(r.json(), indent=4)
 
-
-if __name__ == '__main__':
-
-    cl = Client(login, password, API_KEY)
-    print(cl.account_preferences())
