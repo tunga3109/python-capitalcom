@@ -1,4 +1,4 @@
-Capital.com Public API (1.0.0)
+Welcome to unofficial Python wrapper for the Capital.com exchange REST API v1. Use at your own risk.
 
 The Capital.com API allows direct access to the latest version of our trading engine.
 
