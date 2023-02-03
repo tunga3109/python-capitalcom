@@ -5,7 +5,7 @@ import json
 class CapitalComConstants():
     HEADER_API_KEY_NAME = 'X-CAP-API-KEY'
     API_VERSION = 'v1'
-    BASE_URL = 'https://api-capital.backend-capital.com/api/{}/'.format(
+    BASE_URL = 'https://demo-api-capital.backend-capital.com/api/{}/'.format(
         API_VERSION
     )
 
