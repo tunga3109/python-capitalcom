@@ -5,8 +5,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='capitalcom',
-    version='0.2.2',
+    name='python-capitalcom',
+    version='0.2.5',
     packages=['capitalcom'],
     description='Capital.com REST API python implementation',
     long_description=long_description,
