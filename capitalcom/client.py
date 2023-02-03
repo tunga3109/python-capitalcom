@@ -1,13 +1,14 @@
 from enum import Enum
-
 import requests
 import json
+
 from config import login, password, API_KEY
+
 
 class CapitalComConstants():
     HEADER_API_KEY_NAME = 'X-CAP-API-KEY'
     API_VERSION = 'v1'
-    BASE_URL = 'https://api-capital.backend-capital.com/api/{}/'.format(
+    BASE_URL = 'https://demo-api-capital.backend-capital.com/api/{}/'.format(
         API_VERSION
     )
     BASE_DEMO_URL = 'https://demo-api-capital.backend-capital.com/api/{}/'.format(
@@ -27,6 +28,7 @@ class CapitalComConstants():
     ACCOUNT_ACTIVITY_HISTORY_ENDPOINT = ACCOUNT_HISTORY_ENDPOINT + '/' + 'activity'
     ACCOUNT_TRANSACTION_HISTORY_ENDPOINT = ACCOUNT_HISTORY_ENDPOINT + '/' + 'transactions'
 
+    ACCOUNT_ORDER_CONFIRMATION = BASE_URL + 'confirms'
     POSITIONS_ENDPOINT = BASE_URL + 'positions'
     ORDERS_ENDPOINT = BASE_URL + 'workingorders'
 
@@ -43,6 +45,10 @@ class CapitalComConstants():
 class DirectionType(Enum):
     BUY = 'BUY'
     SELL = 'SELL'
+
+class OrderType(Enum):
+    LIMIT = 'LIMIT'
+    STOP = 'STOP'
 
 class SourceType(Enum):
     CLOSE_OUT = 'CLOSE_OUT'
@@ -212,7 +218,11 @@ class Client():
         )
         return json.dumps(r.json(), indent=4)
 
-    def account_transaction_history(self, fr: str, to: str, last_period: int = 600, type: TransationType = None): 
+    def account_transaction_history(self, 
+                                    fr: str, 
+                                    to: str, 
+                                    last_period: int = 600, 
+                                    type: TransationType = None): 
         r = self._get_with_params_and_headers(
             CapitalComConstants.ACCOUNT_TRANSACTION_HISTORY_ENDPOINT,
             f=fr,
@@ -223,15 +233,163 @@ class Client():
         return json.dumps(r.json(), indent=4)
 
     """POSITIONS"""
+    def position_order_confirmation(self, deal_reference: str):   
+        r = self._get_with_headers(
+            CapitalComConstants.ACCOUNT_ORDER_CONFIRMATION + '/' + deal_reference,
+        )
+        return json.dumps(r.json(), indent=4)
+
     def all_positions(self):   
         r = self._get_with_headers(
             CapitalComConstants.POSITIONS_ENDPOINT,
         )
         return json.dumps(r.json(), indent=4)
+
+    def place_the_position(self, 
+                            direction: DirectionType, 
+                            epic: str, 
+                            size: float, 
+                            gsl: bool = False, 
+                            tsl: bool = False, 
+                            stop_level: float = None, 
+                            stop_distance: float = None, 
+                            stop_amount: float = None, 
+                            profit_level: float = None, 
+                            profit_distance: float = None, 
+                            profit_amount: float = None):
+
+        r = self._post(
+            CapitalComConstants.POSITIONS_ENDPOINT,
+            direction=direction.value,
+            epic=epic,
+            size=size,
+            guaranteedStop=gsl,
+            trailingStop=tsl,
+            stopLevel=stop_level,
+            stopDistance=stop_distance,
+            stopAmount=stop_amount,
+            profitLevel=profit_level,
+            profitDistance=profit_distance,
+            profitAmount=profit_amount
+        )
+
+        return json.dumps(r.json(), indent=4)
+
+    def check_position(self, dealid: str):
+        r = self._get_with_headers(
+            CapitalComConstants.POSITIONS_ENDPOINT,
+            json={'dealId': dealid}
+        )
+        return json.dumps(r.json(), indent=4)
+
+    def update_the_position(self, 
+                            dealid: str,
+                            gsl: bool = False, 
+                            tsl: bool = False, 
+                            stop_level: float = None, 
+                            stop_distance: float = None, 
+                            stop_amount: float = None, 
+                            profit_level: float = None, 
+                            profit_distance: float = None, 
+                            profit_amount: float = None
+                            ):
+        r = self._put(
+            CapitalComConstants.POSITIONS_ENDPOINT + '/' + dealid,
+            guaranteedStop=gsl,
+            trailingStop=tsl,
+            stopLevel=stop_level,
+            stopDistance=stop_distance,
+            stopAmount=stop_amount,
+            profitLevel=profit_level,
+            profitDistance=profit_distance,
+            profitAmount=profit_amount
+        )
+
+        return json.dumps(r.json(), indent=4)
+
     
     def close_position(self, dealid): 
         r = self._delete(
             CapitalComConstants.POSITIONS_ENDPOINT,
+            dealId=dealid,
+        )
+        return json.dumps(r.json(), indent=4)
+
+    """ORDER"""
+    def all_orders(self):   
+        r = self._get_with_headers(
+            CapitalComConstants.ORDERS_ENDPOINT,
+        )
+        return json.dumps(r.json(), indent=4)
+
+    def place_the_order(self, 
+                            direction: DirectionType, 
+                            epic: str, 
+                            size: float, 
+                            level: float,
+                            type: OrderType,
+                            gsl: bool = False, 
+                            tsl: bool = False, 
+                            good_till_date: str = None,
+                            stop_level: float = None, 
+                            stop_distance: float = None, 
+                            stop_amount: float = None, 
+                            profit_level: float = None, 
+                            profit_distance: float = None, 
+                            profit_amount: float = None):
+
+        r = self._post(
+            CapitalComConstants.ORDERS_ENDPOINT,
+            direction=direction.value,
+            epic=epic,
+            size=size,
+            level=level,
+            type=type.value,
+            goodTillDate=good_till_date,
+            guaranteedStop=gsl,
+            trailingStop=tsl,
+            stopLevel=stop_level,
+            stopDistance=stop_distance,
+            stopAmount=stop_amount,
+            profitLevel=profit_level,
+            profitDistance=profit_distance,
+            profitAmount=profit_amount
+        )
+
+        return json.dumps(r.json(), indent=4)
+
+    
+    def update_the_order(self, 
+                            level: float = None,
+                            good_till_date: str = None,
+                            gsl: bool = False, 
+                            tsl: bool = False, 
+                            stop_level: float = None, 
+                            stop_distance: float = None, 
+                            stop_amount: float = None, 
+                            profit_level: float = None, 
+                            profit_distance: float = None, 
+                            profit_amount: float = None):
+
+        r = self._put(
+            CapitalComConstants.ORDERS_ENDPOINT,
+            level=level,
+            goodTillDate=good_till_date,
+            guaranteedStop=gsl,
+            trailingStop=tsl,
+            stopLevel=stop_level,
+            stopDistance=stop_distance,
+            stopAmount=stop_amount,
+            profitLevel=profit_level,
+            profitDistance=profit_distance,
+            profitAmount=profit_amount
+        )
+
+        return json.dumps(r.json(), indent=4)
+    
+    def close_order(self, dealid): 
+        r = self._delete(
+            CapitalComConstants.ORDERS_ENDPOINT,
             dealId=dealid,
         )
         return json.dumps(r.json(), indent=4)
