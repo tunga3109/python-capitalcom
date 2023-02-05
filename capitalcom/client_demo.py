@@ -313,7 +313,6 @@ class Client():
             profitDistance=profit_distance,
             profitAmount=profit_amount
         )
-
         return json.dumps(r.json(), indent=4)
 
 
@@ -347,7 +346,6 @@ class Client():
             profitDistance=profit_distance,
             profitAmount=profit_amount
         )
-
         return json.dumps(r.json(), indent=4)
 
     
@@ -399,7 +397,6 @@ class Client():
             profitDistance=profit_distance,
             profitAmount=profit_amount
         )
-
         return json.dumps(r.json(), indent=4)
 
     
@@ -428,7 +425,6 @@ class Client():
             profitDistance=profit_distance,
             profitAmount=profit_amount
         )
-
         return json.dumps(r.json(), indent=4)
     
     
