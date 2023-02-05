@@ -26,7 +26,7 @@ class CapitalComConstants():
     POSITIONS_ENDPOINT = BASE_URL + 'positions'
     ORDERS_ENDPOINT = BASE_URL + 'workingorders'
 
-    MARKET_NAVIGATION_ENDPOINT = BASE_URL = 'marketnavigation'
+    MARKET_NAVIGATION_ENDPOINT = BASE_URL + 'marketnavigation'
     MARKET_INFORMATION_ENDPOINT = BASE_URL + 'markets'
 
     PRICES_INFORMATION_ENDPOINT = BASE_URL + 'prices'
