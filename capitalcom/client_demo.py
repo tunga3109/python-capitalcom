@@ -20,7 +20,6 @@ class CapitalComConstants():
 
     ACCOUNT_HISTORY_ENDPOINT = BASE_URL + 'history'
     ACCOUNT_ACTIVITY_HISTORY_ENDPOINT = ACCOUNT_HISTORY_ENDPOINT + '/' + 'activity'
-    ACCOUNT_TRANSACTION_HISTORY_ENDPOINT = ACCOUNT_HISTORY_ENDPOINT + '/' + 'transactions'
 
     ACCOUNT_ORDER_CONFIRMATION = BASE_URL + 'confirms'
     POSITIONS_ENDPOINT = BASE_URL + 'positions'
@@ -271,22 +270,6 @@ class Client():
             dealId=dealid,
             epic=epic,
             filter=filter
-        )
-        return json.dumps(r.json(), indent=4)
-
-
-    def account_transaction_history(self, 
-                                    fr: str, 
-                                    to: str, 
-                                    last_period: int = 600, 
-                                    type: TransationType = None): 
-
-        r = self._get_with_params_and_headers(
-            CapitalComConstants.ACCOUNT_TRANSACTION_HISTORY_ENDPOINT,
-            f=fr,
-            to=to,
-            lastPeriod=last_period,
-            type=type.value
         )
         return json.dumps(r.json(), indent=4)
 
