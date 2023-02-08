@@ -448,8 +448,7 @@ class Client():
     
     def close_order(self, dealid): 
         r = self._delete(
-            CapitalComConstants.ORDERS_ENDPOINT,
-            dealId=dealid,
+            CapitalComConstants.ORDERS_ENDPOINT + '/' + dealid,
         )
         return json.dumps(r.json(), indent=4)
 
