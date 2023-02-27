@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='capitalcom-python',
-    version='0.2.10',
+    version='0.2.11',
     packages=['capitalcom'],
     description='Capital.com REST API python implementation',
     long_description=long_description,
