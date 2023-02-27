@@ -318,8 +318,7 @@ class Client():
 
     def check_position(self, dealid: str):
         r = self._get_with_headers(
-            CapitalComConstants.POSITIONS_ENDPOINT,
-            json={'dealId': dealid}
+            CapitalComConstants.POSITIONS_ENDPOINT + '/' + dealid,
         )
         return json.dumps(r.json(), indent=4)
 
@@ -351,8 +350,7 @@ class Client():
     
     def close_position(self, dealid): 
         r = self._delete(
-            CapitalComConstants.POSITIONS_ENDPOINT,
-            dealId=dealid,
+            CapitalComConstants.POSITIONS_ENDPOINT + '/' + dealid,
         )
         return json.dumps(r.json(), indent=4)
 
