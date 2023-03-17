@@ -242,7 +242,7 @@ class Client():
         return json.dumps(r.json(), indent=4)
 
 
-    def update_account_preferences(self, leverages: dict, hedgingmode: bool): 
+    def update_account_preferences(self, leverages: dict = None, hedgingmode: bool = None): 
         r = self._put(
             CapitalComConstants.ACCOUNT_PREFERENCES_ENDPOINT,
             leverages=leverages,
@@ -252,18 +252,18 @@ class Client():
 
 
     def account_activity_history(self, 
-                                    fr: str, 
-                                    to: str, 
+                                    fr: str = None, 
+                                    to: str = None, 
                                     last_period: int = 600, 
                                     detailed: bool = True, 
                                     dealid: str = None, 
                                     epic: str = None, 
                                     filter: str = None): 
         
-        f = 'from'
+        
         r = self._get_with_params_and_headers(
             CapitalComConstants.ACCOUNT_ACTIVITY_HISTORY_ENDPOINT,
-            f=fr,
+            from_=fr,
             to=to,
             lastPeriod=last_period,
             detailed=detailed,

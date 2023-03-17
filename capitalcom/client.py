@@ -243,7 +243,7 @@ class Client():
         return json.dumps(r.json(), indent=4)
 
 
-    def update_account_preferences(self, leverages: dict, hedgingmode: bool): 
+    def update_account_preferences(self, leverages: dict = None, hedgingmode: bool = None): 
         r = self._put(
             CapitalComConstants.ACCOUNT_PREFERENCES_ENDPOINT,
             leverages=leverages,
