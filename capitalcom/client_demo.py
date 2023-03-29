@@ -259,8 +259,7 @@ class Client():
                                     dealid: str = None, 
                                     epic: str = None, 
                                     filter: str = None): 
-        
-        
+
         r = self._get_with_params_and_headers(
             CapitalComConstants.ACCOUNT_ACTIVITY_HISTORY_ENDPOINT,
             from_=fr,
@@ -399,6 +398,7 @@ class Client():
 
     
     def update_the_order(self, 
+                            dealId: str,
                             level: float = None,
                             good_till_date: str = None,
                             gsl: bool = False, 
@@ -411,7 +411,7 @@ class Client():
                             profit_amount: float = None):
 
         r = self._put(
-            CapitalComConstants.ORDERS_ENDPOINT,
+            CapitalComConstants.ORDERS_ENDPOINT + '/' + dealId,
             level=level,
             goodTillDate=good_till_date,
             guaranteedStop=gsl,
