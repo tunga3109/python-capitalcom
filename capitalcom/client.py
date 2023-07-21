@@ -83,6 +83,15 @@ class TransationType(Enum):
     BONUS = 'BONUS'
     TRANSFER = 'TRANSFER'
 
+class ResolutionType(Enum):
+    MINUTE = 'MINUTE'
+    MINUTE_5 = 'MINUTE_5'
+    MINUTE_15 = 'MINUTE_15'
+    MINUTE_30 = 'MINUTE_30'
+    HOUR = 'HOUR'
+    HOUR_4 = 'HOUR_4'
+    DAY = 'DAY'
+    WEEK = 'WEEK'
 class Client():
     """
     This is API for market Capital.com
@@ -450,3 +459,20 @@ class Client():
         )
         return json.dumps(r.json(), indent=4)
 
+    def market_navigation(self, node_id: str = ''): 
+        r = self._get_with_headers(
+            CapitalComConstants.MARKET_NAVIGATION_ENDPOINT + '/' + node_id,
+        )
+        return json.dumps(r.json(), indent=4)
+    
+    
+    def historical_prices(self, 
+                          epic, 
+                          resolution: ResolutionType,
+                          max:int = 10):
+        r = self._get_with_params_and_headers(
+            CapitalComConstants.PRICES_INFORMATION_ENDPOINT + '/' + epic,
+            resolution=resolution.value,
+            max=max
+        )
+        return json.dumps(r.json(), indent=4)
