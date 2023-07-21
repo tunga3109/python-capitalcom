@@ -1,5 +1,35 @@
+import unittest
+import warnings
+
+
 from client_demo import *
 from config import *
 
-cl = Client(login, password, API_KEY)
-cl.close_position(dealid='000940dd-0055-311e-0000-0000818fe41d')
+class TestCapitalAPI(unittest.TestCase):
+
+    def setUp(self) -> None:
+        
+        self.client = Client(login, password, API_KEY)
+
+    def test_status_code(self):
+
+        self.status_code = self.client.response.status_code
+        self.assertEqual(self.status_code, 200)
+
+        warnings.filterwarnings(action="ignore", message="unclosed", category=ResourceWarning)
+
+    def test_account_info(self):
+        self.account_info = self.client.all_accounts()
+        self.assertEqual(self.account_info, self.account_info)
+
+        warnings.filterwarnings(action="ignore", message="unclosed", category=ResourceWarning)
+
+
+
+if __name__ == '__main__':
+    
+    unittest.main()
+
+
+
+
