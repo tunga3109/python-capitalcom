@@ -459,4 +459,11 @@ class Client():
             max=max
         )
         return json.dumps(r.json(), indent=4)
+    
+    def watchlist(self):
+        r = self._get_with_headers(
+            CapitalComConstants.WATCHLISTS_ENDPOINT,
+        )
+        return json.dumps(r.json(), indent=4)
+
 
