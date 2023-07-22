@@ -24,10 +24,19 @@ class TestCapitalAPI(unittest.TestCase):
 
         warnings.filterwarnings(action="ignore", message="unclosed", category=ResourceWarning)
 
+    def test_placing_position(self):
+        self.placing_position = self.client.place_the_position(
+            epic='BTCUSD',
+            size=1,
+            direction=DirectionType.BUY
+        )
+        self.assertEqual(self.placing_position, self.placing_position)
+
+        warnings.filterwarnings(action="ignore", message="unclosed", category=ResourceWarning)
 
 
 if __name__ == '__main__':
-    
+   
     unittest.main()
 
 
