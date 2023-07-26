@@ -7,5 +7,5 @@ cl = Client(
     api_key=API_KEY
 )
 
-w = cl.all_positions()
+w = cl.client_sentiment('SILVER')
 print(w)

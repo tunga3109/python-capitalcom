@@ -460,9 +460,17 @@ class Client():
         )
         return json.dumps(r.json(), indent=4)
     
-    def watchlist(self):
+    def all_watchlist(self, 
+                      watchlist_id:str = ''):
         r = self._get_with_headers(
-            CapitalComConstants.WATCHLISTS_ENDPOINT,
+            CapitalComConstants.WATCHLISTS_ENDPOINT + '/' + watchlist_id,
+        )
+        return json.dumps(r.json(), indent=4)
+    
+    def client_sentiment(self, 
+                      market_id:str = ''):
+        r = self._get_with_headers(
+            CapitalComConstants.CLIENT_SENTIMENT_ENDPOINT + '/' + market_id,
         )
         return json.dumps(r.json(), indent=4)
 
