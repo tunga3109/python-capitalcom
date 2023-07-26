@@ -1,11 +1,11 @@
 from config import *
 from capitalcom.client_demo import *
+import requests
 
 cl = Client(
-    log=login,
-    pas=password,
-    api_key=API_KEY
+    login,
+    password,
+    API_KEY
 )
 
-w = cl.client_sentiment('SILVER')
-print(w)
+
