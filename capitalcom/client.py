@@ -458,21 +458,5 @@ class Client():
             CapitalComConstants.ORDERS_ENDPOINT + '/' + dealid,
         )
         return json.dumps(r.json(), indent=4)
+    
 
-    def market_navigation(self, node_id: str = ''): 
-        r = self._get_with_headers(
-            CapitalComConstants.MARKET_NAVIGATION_ENDPOINT + '/' + node_id,
-        )
-        return json.dumps(r.json(), indent=4)
-    
-    
-    def historical_prices(self, 
-                          epic, 
-                          resolution: ResolutionType,
-                          max:int = 10):
-        r = self._get_with_params_and_headers(
-            CapitalComConstants.PRICES_INFORMATION_ENDPOINT + '/' + epic,
-            resolution=resolution.value,
-            max=max
-        )
-        return json.dumps(r.json(), indent=4)
