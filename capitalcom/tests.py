@@ -35,6 +35,14 @@ class TestCapitalAPI(unittest.TestCase):
         warnings.filterwarnings(action="ignore", message="unclosed", category=ResourceWarning)
 
 
+    def test_marketnavigation(self):
+        self.market_nav = self.client.market_navigation()
+        self.assertEqual(self.market_nav, self.market_nav)
+
+        warnings.filterwarnings(action="ignore", message="unclosed", category=ResourceWarning)
+
+
+
 if __name__ == '__main__':
    
     unittest.main()
