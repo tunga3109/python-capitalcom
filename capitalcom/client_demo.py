@@ -111,9 +111,10 @@ class Client():
             json={'identifier': self.login, 'password': self.password},
             headers={'X-CAP-API-KEY': self.api_key}
         )
-
-        self.cst = self.response.headers['CST']
-        self.x_security_token = self.response.headers['X-SECURITY-TOKEN']
+        
+        if self.response.status_code == 200:
+            self.cst = self.response.headers['CST']
+            self.x_security_token = self.response.headers['X-SECURITY-TOKEN']
 
     """Rest API Methods"""
 
@@ -451,7 +452,7 @@ class Client():
     
     def historical_prices(self, 
                           epic, 
-                          resolution: ResolutionType,
+                          resolution: ResolutionType = ResolutionType.MINUTE,
                           max:int = 10):
         r = self._get_with_params_and_headers(
             CapitalComConstants.PRICES_INFORMATION_ENDPOINT + '/' + epic,

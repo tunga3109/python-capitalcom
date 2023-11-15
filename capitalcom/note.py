@@ -1,5 +1,5 @@
-from config import *
-from capitalcom.client_demo import *
+from config import login, password, API_KEY
+from capitalcom.client_demo import Client
 
 
 cl = Client(
@@ -7,5 +7,13 @@ cl = Client(
     password,
     API_KEY
 )
+
+prices = cl.historical_prices(
+    epic='BTCUSD'
+)
+
+print(cl.cst)
+
+a = ''
 
 
