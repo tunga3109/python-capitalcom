@@ -1,6 +1,6 @@
 from config import login, password, API_KEY
 
-from client_demo import Client
+from client_demo import *
 
 cl = Client(
     login,
@@ -9,5 +9,6 @@ cl = Client(
 )
 
 prices = cl.historical_prices('BTCUSD')
+print(prices)
 
 a = ''
