@@ -112,9 +112,9 @@ class Client():
             headers={'X-CAP-API-KEY': self.api_key}
         )
         
-        if 'CST' in self.response.headers and self.response.status_code == 200:
-            self.cst = self.response.headers['CST']
-            self.x_security_token = self.response.headers['X-SECURITY-TOKEN']
+        if self.response.status_code == 200:
+            self.cst = self.response.headers.get('CST')
+            self.x_security_token = self.response.headers.get('X-SECURITY-TOKEN')
             
     """Rest API Methods"""
 

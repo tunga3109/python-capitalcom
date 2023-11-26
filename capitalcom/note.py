@@ -1,6 +1,6 @@
-from capitalcom.client_demo import Client
-from capitalcom.config import API_KEY, login, password
+from config import login, password, API_KEY
 
+from client_demo import Client
 
 cl = Client(
     login,
@@ -8,8 +8,6 @@ cl = Client(
     API_KEY
 )
 
-price = cl.historical_prices(
-    'BTCUSD'
-)
+prices = cl.historical_prices('BTCUSD')
 
 a = ''
