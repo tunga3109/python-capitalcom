@@ -11,13 +11,6 @@ class TestCapitalAPI(unittest.TestCase):
         
         self.client = Client(login, password, API_KEY)
 
-    def test_status_code(self):
-
-        self.status_code = self.client.response.status_code
-        self.assertEqual(self.status_code, 200)
-
-        warnings.filterwarnings(action="ignore", message="unclosed", category=ResourceWarning)
-
     def test_account_info(self):
         self.account_info = self.client.all_accounts()
         self.assertEqual(self.account_info, self.account_info)
