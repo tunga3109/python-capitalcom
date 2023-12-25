@@ -8,6 +8,6 @@ cl = Client(
     API_KEY
 )
 
-prices = cl.check_server_time()
+# prices = cl.check_server_time()
 
 a = ''
