@@ -8,7 +8,6 @@ cl = Client(
     API_KEY
 )
 
-prices = cl.historical_prices('BTCUSD')
-print(prices)
+prices = cl.check_server_time()
 
 a = ''

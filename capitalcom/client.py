@@ -17,10 +17,11 @@ class CapitalComConstants():
 
     ACCOUNTS_ENDPOINT = BASE_URL + 'accounts'
     ACCOUNT_PREFERENCES_ENDPOINT = ACCOUNTS_ENDPOINT + '/' + 'preferences'
+    TOPPING_UP_ENDPOINT = ACCOUNTS_ENDPOINT + '/' + 'topUp'
 
     ACCOUNT_HISTORY_ENDPOINT = BASE_URL + 'history'
     ACCOUNT_ACTIVITY_HISTORY_ENDPOINT = ACCOUNT_HISTORY_ENDPOINT + '/' + 'activity'
-    ACCOUNT_TRANSACTION_HISTORY_ENDPOINT = ACCOUNT_HISTORY_ENDPOINT + '/' + 'transactions'
+    ACCOUNT_TRANSACTIONS_ENDPOINT = ACCOUNT_HISTORY_ENDPOINT + '/' + 'transactions'
 
     ACCOUNT_ORDER_CONFIRMATION = BASE_URL + 'confirms'
     POSITIONS_ENDPOINT = BASE_URL + 'positions'
@@ -92,6 +93,7 @@ class ResolutionType(Enum):
     HOUR_4 = 'HOUR_4'
     DAY = 'DAY'
     WEEK = 'WEEK'
+
 class Client():
     """
     This is API for market Capital.com
@@ -111,9 +113,12 @@ class Client():
             json={'identifier': self.login, 'password': self.password},
             headers={'X-CAP-API-KEY': self.api_key}
         )
-
-        self.cst = self.response.headers['CST']
-        self.x_security_token = self.response.headers['X-SECURITY-TOKEN']
+        if self.response.status_code == 200:
+            self.cst = self.response.headers['CST']
+            self.x_security_token = self.response.headers['X-SECURITY-TOKEN']
+            # print(f'Status code: {self.response.status_code} - Successfully')
+        else:
+            print(f'Status code: {self.response.status_code} - {self.response.json()}')
 
     """Rest API Methods"""
 
@@ -179,7 +184,7 @@ class Client():
             CapitalComConstants.SESSION_ENDPOINT,
         )
 
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
     def switch_account(self, accountId): 
         """
@@ -195,13 +200,13 @@ class Client():
             CapitalComConstants.SESSION_ENDPOINT,
             accountId=accountId,
         )
-        return json.dumps(r.json(), indent=4)
-    
+        return json.loads(json.dumps(r.json(), indent=4))
+
     def log_out_account(self):
         r = self._delete(
             CapitalComConstants.SESSION_ENDPOINT,
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
     
     """ACCOUNTS"""
     def all_accounts(self): 
@@ -242,28 +247,28 @@ class Client():
         r = self._get_with_headers(
             CapitalComConstants.ACCOUNTS_ENDPOINT,
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
 
     def account_preferences(self): 
         r = self._get_with_headers(
             CapitalComConstants.ACCOUNT_PREFERENCES_ENDPOINT,
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
 
-    def update_account_preferences(self, leverages: dict = None, hedgingmode: bool = None): 
+    def update_account_preferences(self,hedgingmode: bool, leverages: dict = None): 
         r = self._put(
             CapitalComConstants.ACCOUNT_PREFERENCES_ENDPOINT,
             leverages=leverages,
             hedgingMode=hedgingmode
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
 
     def account_activity_history(self, 
-                                    fr: str, 
-                                    to: str, 
+                                    fr: str = None, 
+                                    to: str = None, 
                                     last_period: int = 600, 
                                     detailed: bool = True, 
                                     dealid: str = None, 
@@ -281,36 +286,27 @@ class Client():
             epic=epic,
             filter=filter
         )
-        return json.dumps(r.json(), indent=4)
-
-
-    def account_transaction_history(self, 
-                                    fr: str, 
-                                    to: str, 
-                                    last_period: int = 600, 
-                                    type: TransationType = None): 
-
-        r = self._get_with_params_and_headers(
-            CapitalComConstants.ACCOUNT_TRANSACTION_HISTORY_ENDPOINT,
-            f=fr,
-            to=to,
-            lastPeriod=last_period,
-            type=type.value
+        return json.loads(json.dumps(r.json(), indent=4))
+    
+    def account_transactions_history(self):
+        r = self._get_with_headers(
+            CapitalComConstants.ACCOUNT_TRANSACTIONS_ENDPOINT
         )
-        return json.dumps(r.json(), indent=4)
+
+        return json.loads(json.dumps(r.json(), indent=4))
 
     """POSITIONS"""
     def position_order_confirmation(self, deal_reference: str):   
         r = self._get_with_headers(
             CapitalComConstants.ACCOUNT_ORDER_CONFIRMATION + '/' + deal_reference,
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
     def all_positions(self):   
         r = self._get_with_headers(
             CapitalComConstants.POSITIONS_ENDPOINT,
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
     def place_the_position(self, 
                             direction: DirectionType, 
@@ -339,14 +335,14 @@ class Client():
             profitDistance=profit_distance,
             profitAmount=profit_amount
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
 
     def check_position(self, dealid: str):
         r = self._get_with_headers(
             CapitalComConstants.POSITIONS_ENDPOINT + '/' + dealid,
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
 
     def update_the_position(self, 
@@ -371,12 +367,13 @@ class Client():
             profitDistance=profit_distance,
             profitAmount=profit_amount
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
     
     def close_position(self, dealid): 
         r = self._delete(
-            CapitalComConstants.POSITIONS_ENDPOINT + '/' + dealid,
+            CapitalComConstants.POSITIONS_ENDPOINT,
+            dealId=dealid,
         )
         return json.dumps(r.json(), indent=4)
 
@@ -385,7 +382,7 @@ class Client():
         r = self._get_with_headers(
             CapitalComConstants.ORDERS_ENDPOINT,
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
 
     def place_the_order(self, 
@@ -421,7 +418,7 @@ class Client():
             profitDistance=profit_distance,
             profitAmount=profit_amount
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
 
     
     def update_the_order(self, 
@@ -449,14 +446,97 @@ class Client():
             profitDistance=profit_distance,
             profitAmount=profit_amount
         )
-
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
     
     
     def close_order(self, dealid): 
         r = self._delete(
             CapitalComConstants.ORDERS_ENDPOINT + '/' + dealid,
         )
-        return json.dumps(r.json(), indent=4)
+        return json.loads(json.dumps(r.json(), indent=4))
     
+
+    def single_market(self, epic: str):
+        r = self._get_with_headers(
+            CapitalComConstants.MARKET_INFORMATION_ENDPOINT + '/' + epic
+        )
+        return json.loads(json.dumps(r.json(), indent=4))
+    
+    def market_navigation(self, node_id: str = ''):
+        r = self._get_with_headers(
+            CapitalComConstants.MARKET_NAVIGATION_ENDPOINT + '/' + node_id
+        )
+        return json.loads(json.dumps(r.json(), indent=4))
+    
+
+    def searching_market(self, searchTerm: str = None, epics: str = None):
+        r = self._get_with_params_and_headers(
+                CapitalComConstants.MARKET_INFORMATION_ENDPOINT,
+                searchTerm=searchTerm,
+                epics=epics
+        )
+        return json.loads(json.dumps(r.json(), indent=4))
+    
+    def historical_price(self, epic, resolution:ResolutionType = ResolutionType.MINUTE, max:int = 10, fr:str = None, to:str = None):
+
+        r = self.session.get(
+            CapitalComConstants.PRICES_INFORMATION_ENDPOINT + '/' + epic,
+            params={
+                'resolution': resolution.value,
+                'max': max,
+                'from': fr,
+                'to': to
+            },
+            headers={
+                'CST': self.cst,
+                'X-SECURITY-TOKEN': self.x_security_token
+            }
+        )
+        return json.loads(json.dumps(r.json(), indent=4))
+
+    def watchlist(self, watchlist_id:str=''):
+
+        r = self._get_with_headers(
+            CapitalComConstants.WATCHLISTS_ENDPOINT + '/' + watchlist_id
+        )
+
+        return json.loads(json.dumps(r.json(), indent=4))
+    
+    def check_server_time(self):
+        r = self._get(
+            CapitalComConstants.SERVER_TIME_ENDPOINT
+        )
+        return json.loads(json.dumps(r.json(), indent=4))
+    
+    def client_sentiment(self):
+        r = self._get_with_headers(
+            CapitalComConstants.CLIENT_SENTIMENT_ENDPOINT
+        )
+        return json.loads(json.dumps(r.json(), indent=4))
+
+    def margin_calculation(self, price: float, leverage: float, size: float):
+        
+        return (price * size) * 1/leverage
+    
+    def overnight_fee_calculation(self, 
+                                  closing_ask: float, 
+                                  closing_bid: float, 
+                                  size: float,
+                                  fee_rate: float):
+        mid_price = (closing_ask + closing_bid)/2
+        overnight_fee = round(mid_price * size * fee_rate, 2)
+
+        return overnight_fee
+    
+    def topping_up_funds(self, amount: float):
+
+        if -40000 <= amount <= 40000: 
+            r = self._post(
+                CapitalComConstants.TOPPING_UP_ENDPOINT,
+                amount=amount
+            )
+            return json.loads(json.dumps(r.json(), indent=4))
+        
+        else:
+            return {"errorCode": "error.invalid.amount"}
 
