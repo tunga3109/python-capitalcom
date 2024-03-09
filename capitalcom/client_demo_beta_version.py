@@ -95,26 +95,18 @@ class ResolutionType(Enum):
     DAY = 'DAY'
     WEEK = 'WEEK'
 
-class Client:
-    """
-    This is API for market Capital.com
-    list of endpoints here : https://open-api.capital.com
-    API documantation here: https://capital.com/api-development-guide
-    """
-
-    """Starting session"""
-    def __init__(self, log, pas, api_key):
-        self.login = log
-        self.password = pas
-        self.api_key = api_key
-
-class Session(Client):
+class Session():
         
         def __init__(self, log, pas, api_key):
-            super().__init__(log, pas, api_key)
-            self.session = requests.Session()
+            self.login = log
+            self.password = pas
+            self.api_key = api_key
+            self.cst = None
+            self.x_security_token = None
         
+            
         def start_session(self): 
+            self.session = requests.Session()
             self.response = self.session.post(
                 CapitalComConstants.SESSION_ENDPOINT,
                 json={'identifier': self.login, 'password': self.password},
@@ -127,9 +119,6 @@ class Session(Client):
             else:
                 print(f'Status code: {self.response.status_code} - {self.response.json()}')
             
-
-client = Session(login, password, API_KEY)
-
 
 class ApiMethods(Session):
     """Rest API Methods"""
@@ -308,7 +297,6 @@ class AccountDetails(ApiMethods):
         )
 
         return json.loads(json.dumps(r.json(), indent=4))
-
 
 class PositionDetails(ApiMethods, Session):
     """POSITIONS"""
