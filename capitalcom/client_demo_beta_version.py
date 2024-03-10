@@ -381,7 +381,7 @@ class PositionDetails(AccountDetails, ApiMethods):
         return json.dumps(r.json(), indent=4)
 
 
-class OrdrDetails(AccountDetails, ApiMethods):
+class OrderDetails(AccountDetails, ApiMethods):
     """ORDER"""
     def all_orders(self):   
         r = self._get_with_headers(
