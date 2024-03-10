@@ -104,8 +104,6 @@ class Session():
             self.cst = None
             self.x_security_token = None
         
-            
-        def start_session(self): 
             self.session = requests.Session()
             self.response = self.session.post(
                 CapitalComConstants.SESSION_ENDPOINT,
@@ -251,13 +249,14 @@ class AccountDetails(ApiMethods):
             CapitalComConstants.ACCOUNTS_ENDPOINT,
         )
         return json.loads(json.dumps(r.json(), indent=4))
-
-
+    
     def account_preferences(self): 
         r = self._get_with_headers(
             CapitalComConstants.ACCOUNT_PREFERENCES_ENDPOINT,
         )
         return json.loads(json.dumps(r.json(), indent=4))
+
+class AccountReportDetails(AccountDetails ,ApiMethods):
 
 
     def update_account_preferences(self,hedgingmode: bool, leverages: dict = None): 
@@ -298,7 +297,7 @@ class AccountDetails(ApiMethods):
 
         return json.loads(json.dumps(r.json(), indent=4))
 
-class PositionDetails(ApiMethods, Session):
+class PositionDetails(AccountDetails, ApiMethods):
     """POSITIONS"""
     def position_order_confirmation(self, deal_reference: str):   
         r = self._get_with_headers(
@@ -381,13 +380,14 @@ class PositionDetails(ApiMethods, Session):
         )
         return json.dumps(r.json(), indent=4)
 
+
+class OrdrDetails(AccountDetails, ApiMethods):
     """ORDER"""
     def all_orders(self):   
         r = self._get_with_headers(
             CapitalComConstants.ORDERS_ENDPOINT,
         )
         return json.loads(json.dumps(r.json(), indent=4))
-
 
     def place_the_order(self, 
                             direction: DirectionType, 
@@ -460,6 +460,8 @@ class PositionDetails(ApiMethods, Session):
         return json.loads(json.dumps(r.json(), indent=4))
     
 
+class MarketDetals(ApiMethods):
+    
     def single_market(self, epic: str):
         r = self._get_with_headers(
             CapitalComConstants.MARKET_INFORMATION_ENDPOINT + '/' + epic
@@ -497,6 +499,8 @@ class PositionDetails(ApiMethods, Session):
             }
         )
         return json.loads(json.dumps(r.json(), indent=4))
+
+class UserSettings(ApiMethods):
 
     def watchlist(self, watchlist_id:str=''):
 

@@ -1,13 +1,14 @@
 from config import login, password, API_KEY
 
-from client_demo import *
+from client_demo_beta_version import *
 
-cl = Client(
+session = AccountDetails(
     login,
     password,
     API_KEY
 )
 
-# prices = cl.check_server_time()
+
+
 
 a = ''
