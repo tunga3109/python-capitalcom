@@ -522,7 +522,8 @@ class UserSettings(ApiMethods):
         )
         return json.loads(json.dumps(r.json(), indent=4))
 
-    def margin_calculation(self, price: float, leverage: float, size: float):
+    @staticmethod
+    def margin_calculation(price: float, leverage: float, size: float):
         
         return (price * size) * 1/leverage
     
