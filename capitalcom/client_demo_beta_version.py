@@ -527,8 +527,8 @@ class UserSettings(ApiMethods):
         
         return (price * size) * 1/leverage
     
-    def overnight_fee_calculation(self, 
-                                  closing_ask: float, 
+    @staticmethod
+    def overnight_fee_calculation(closing_ask: float, 
                                   closing_bid: float, 
                                   size: float,
                                   fee_rate: float):
