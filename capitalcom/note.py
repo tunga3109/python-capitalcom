@@ -1,27 +1,13 @@
 from config import login, password, API_KEY
 import time
+from client_demo import *
 
-def measure_time(func):
-    def wrapper():
-        start = time.time()
-        func()
-        end = time.time()
-        print(f"Execution time: {end - start} seconds")
-    return wrapper
+cl = Client(login, password, API_KEY)
 
-
-from client_demo_beta_version import *
-
-session = AccountDetails(
-    login,
-    password,
-    API_KEY
+pos = cl.place_the_position(
+    direction=DirectionType.BUY,
+    epic='BTCUSD',
+    size=1
 )
-
-@measure_time
-def margin():
-    print(UserSettings.margin_calculation(1,1,1))
-    
-margin()
 
 a = ''
