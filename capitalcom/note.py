@@ -1,7 +1,6 @@
-from config import login, password, API_KEY
-import time
-from client_demo import *
+from config import *
+from client_demo_beta_version import Session
 
-cl = Client(login, password, API_KEY)
+cl = Session(login, password, API_KEY)
 
-a = ''
+print(cl)

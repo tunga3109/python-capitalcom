@@ -97,39 +97,26 @@ class ResolutionType(Enum):
 
 class Session():
         
-        __instance = None
-        
-        def __new__(cls, *args, **kwargs):
-            if cls.__instance is None:
-                cls.__instance = super().__new__(cls)
-                
-            return cls.__instance
-    
-        @classmethod
-        def __check_value(cls, x):
-            return isinstance(x, str) 
-            
-        
         def __init__(self, log, pas, api_key):
-            if self.__check_value(log) and self.__check_value(pas) and self.__check_value(api_key):
-                self.__login = log
-                self.__password = pas
-                self.__api_key = api_key
-                self.cst = None
-                self.x_security_token = None
+            self.login = log
+            self.password = pas
+            self.api_key = api_key
+            self.cst = None
+            self.x_security_token = None
+        
+            self.session = requests.Session()
+            self.response = self.session.post(
+                CapitalComConstants.SESSION_ENDPOINT,
+                json={'identifier': self.login, 'password': self.password},
+                headers={'X-CAP-API-KEY': self.api_key}
+            )
+            if self.response.status_code == 200:
+                self.cst = self.response.headers['CST']
+                self.x_security_token = self.response.headers['X-SECURITY-TOKEN']
+                print(f'Status code: {self.response.status_code} - Successfully')
+            else:
+                print(f'Status code: {self.response.status_code} - {self.response.json()}')
             
-                self.session = requests.Session()
-                self.response = self.session.post(
-                    CapitalComConstants.SESSION_ENDPOINT,
-                    json={'identifier': self.__login, 'password': self.__password},
-                    headers={'X-CAP-API-KEY': self.__api_key}
-                )
-                if self.response.status_code == 200:
-                    self.cst = self.response.headers['CST']
-                    self.x_security_token = self.response.headers['X-SECURITY-TOKEN']
-                    print(f'Status code: {self.response.status_code} - Successfully')
-                else:
-                    print(f'Status code: {self.response.status_code} - {self.response.json()}')            
 
 class ApiMethods(Session):
     """Rest API Methods"""
