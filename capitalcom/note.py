@@ -1,6 +1,6 @@
 from config import *
-from client_demo_beta_version import Session
+from client_demo import *
 
-cl = Session(login, password, API_KEY)
+cl = Client(login, password, API_KEY)
 
-print(cl)
+a = ''
