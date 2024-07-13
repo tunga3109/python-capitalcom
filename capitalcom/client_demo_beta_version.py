@@ -562,3 +562,4 @@ class UserSettings(ApiMethods):
         else:
             return {"errorCode": "error.invalid.amount"}
 
+a = ''
