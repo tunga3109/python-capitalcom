@@ -1,23 +1,15 @@
 from config import *
 from client_demo import *
 
-from client_demo_renew import *
+from client_demo_beta_version_2 import *
 
-session = CapitalComSession(log=login, pas=password, api_key=API_KEY)
 
-    # Initialize client with the session
-client = CapitalComClient(session=session)
+pos_setting = PositionDetails(login, password, API_KEY)
 
-# Create service instance
-account_service = AccountService(client=client)
+user_setting = UserSettings(login, password, API_KEY)
+user_setting.topping_up_funds(1000)
 
-market_service = MarketService(client=client)
-
-position_service = PositionService(client=client)
-
-position_service.place_the_position(direction=DirectionType.BUY, epic='BTCUSD', size=1)
-
-# Close session when done
-session.close()
+pos_setting.place_the_position(epic='BTCUSD', size=1, direction=DirectionType.BUY)
+pos_setting.close_position('000940dd-0055-311e-0000-00008294a64b')
 
 a = ''

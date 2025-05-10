@@ -297,7 +297,7 @@ class AccountReportDetails(AccountDetails ,ApiMethods):
 
         return json.loads(json.dumps(r.json(), indent=4))
 
-class PositionDetails(AccountDetails, ApiMethods):
+class PositionDetails(ApiMethods):
     """POSITIONS"""
     def position_order_confirmation(self, deal_reference: str):   
         r = self._get_with_headers(
