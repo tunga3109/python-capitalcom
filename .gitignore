@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 config.py
 .env
+client_demo_beta_version_2.py
 
 # C extensions
 *.so
